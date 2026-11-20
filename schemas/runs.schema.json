@@ -1,0 +1,135 @@
+{
+  "$defs": {
+    "JudgeScore": {
+      "additionalProperties": false,
+      "description": "The anti-drift triple. Cross-version comparison is a schema error\nat the reporting layer, not a footnote in a dashboard.",
+      "properties": {
+        "judge_version": {
+          "minLength": 1,
+          "title": "Judge Version",
+          "type": "string"
+        },
+        "rubric_version": {
+          "minLength": 1,
+          "title": "Rubric Version",
+          "type": "string"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score",
+        "judge_version",
+        "rubric_version"
+      ],
+      "title": "JudgeScore",
+      "type": "object"
+    },
+    "PayloadRef": {
+      "additionalProperties": false,
+      "description": "Pointer into immutable object storage. Never inline large payloads.",
+      "properties": {
+        "bucket": {
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "PayloadRef",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "running",
+        "succeeded",
+        "failed",
+        "aborted"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One end-to-end task execution. runs table row.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dag_spec_ref": {
+      "$ref": "#/$defs/PayloadRef"
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished At"
+    },
+    "judge_scores": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/JudgeScore"
+      },
+      "title": "Judge Scores",
+      "type": "array"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/RunStatus"
+    },
+    "task_id": {
+      "minLength": 1,
+      "title": "Task Id",
+      "type": "string"
+    },
+    "tenant_id": {
+      "minLength": 1,
+      "title": "Tenant Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "tenant_id",
+    "status",
+    "dag_spec_ref"
+  ],
+  "title": "Run",
+  "type": "object"
+}

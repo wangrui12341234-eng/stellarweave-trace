@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "PayloadRef": {
+      "additionalProperties": false,
+      "description": "Pointer into immutable object storage. Never inline large payloads.",
+      "properties": {
+        "bucket": {
+          "minLength": 1,
+          "title": "Bucket",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bucket",
+        "key",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "PayloadRef",
+      "type": "object"
+    },
+    "ToolCallStatus": {
+      "enum": [
+        "ok",
+        "error",
+        "timeout",
+        "rejected"
+      ],
+      "title": "ToolCallStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One tool invocation inside a step. tool_calls table row.",
+  "properties": {
+    "arguments_ref": {
+      "$ref": "#/$defs/PayloadRef"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    },
+    "latency_ms": {
+      "minimum": 0,
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "result_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PayloadRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "$ref": "#/$defs/ToolCallStatus"
+    },
+    "step_id": {
+      "title": "Step Id",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "title": "Tool Call Id",
+      "type": "string"
+    },
+    "tool_name": {
+      "minLength": 1,
+      "title": "Tool Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "tool_name",
+    "arguments_ref",
+    "status",
+    "latency_ms"
+  ],
+  "title": "ToolCall",
+  "type": "object"
+}
